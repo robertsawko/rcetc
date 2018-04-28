@@ -1,0 +1,52 @@
+export HISTFILE=.warrior_history
+export HISTSIZE=10000
+export HISTFILESIZE=100000
+export HISTCONTROL=ignoreboth:erasedups  # Remove and ignore duplicates
+export TERM=screen-256color
+export PATH=~/bin:$PATH
+
+parse_timew() {
+    blue="\[$(tput setaf 4)\]"
+    red="\[$(tput setaf 196)\]"
+    normal="\[$(tput sgr0)\]"
+
+    tracking=$(timew | head -n1 | grep Tracking)
+
+    if [ -z "$tracking" ];
+    then
+        printf "%*s" $(($COLUMNS+17)) "time: ${blue}no tracking${normal}"
+    else
+        printf "%*s" $(($COLUMNS+23)) "time: ${red}tracking on${normal}"
+    fi
+}
+
+parse_task() {
+    current_task_count=$(task +READY count)
+    due_task_count=$(task +DUE count)
+    next_task_id=$(task +next 2> /dev/null | awk '{print $1}' | grep ID -A2 | tail -n1)
+
+    if [ -z "$next_task_id" ];
+    then
+        next_task_desc=none
+    else
+        next_task_desc=$(task $next_task_id info | grep Description | awk '{print $1=""; print $0}')
+    fi
+
+    echo \
+        next: $next_task_desc, \
+        due: $due_task_count, \
+        ready: $current_task_count
+}
+
+COLOR="\[$(tput setaf 94)\]"
+RESET="\[$(tput sgr0)\]"
+UNDERLINE="\[$(tput smul)\]"
+
+reexport() {
+export PS1="\[$(tput sc; parse_timew; tput rc)\]\
+${COLOR}${UNDERLINE}warriors${RESET}
+task $(parse_task)\n\W$"
+}
+
+export PROMPT_COMMAND=reexport
+
