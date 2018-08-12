@@ -2,8 +2,15 @@ local home = os.getenv("HOME")
 local installPath = pathJoin(
     home, "apps", myModuleName(), myModuleVersion())
 
+local libPath = pathJoin(
+    installPath, 'Dist', 'bin', 'x86_r8', 'lib')
+
 setenv('CASSIOPEE', installPath)
-setenv('CASSIOPEE_FILE', installPath)
+setenv('ELSAPROD', 'x86_r8')
+setenv('OMP_NUM_THREADS', '4')
+prepend_path('PATH', pathJoin(lib, '..'))
+prepend_path('LD_LIBRARY_PATH', libPath)
+prepend_path('PYTHONPATH', pathJoin(libPath, 'python2.7', 'site-packages'))
 
 whatis('CFD Advanced Set of Services In an Open Python EnvironmEnt')
 help([[
