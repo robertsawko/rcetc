@@ -1,0 +1,91 @@
+# mbsync currently assumes that all password inputs are double quote
+# escaped¹. This is true for "Pass" config entries, the output of
+# "PassCmd", and also for passwords entered at the terminal.
+#
+# Thus if one's IMAP password is the three character sequence: a\b
+# it must entered in one of the following ways:
+# 
+#    1. Pass "a\\b"
+#
+#    2. PassCmd "gpg -d mypass.gpg | sed 's:\\:\\\\:g'"
+#
+#    3. $ mbsync chan
+#       Password (chan-imap): a\\b
+#
+
+IMAPAccount gmail
+# Address to connect to
+Host imap.gmail.com
+User robertsawko@gmail.com
+Pass *****
+#PassCmd "echo ***"
+SSLType IMAPS
+AuthMechs LOGIN
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+# To store the password in an encrypted file use PassCmd instead of Pass
+# Use SSL
+# The following line should work. If get certificate errors, uncomment the two following lines and read the "Troubleshooting" section.
+#CertificateFile ~/.cert/imap.gmail.com.pem
+#CertificateFile ~/.cert/Equifax_Secure_CA.pem
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+# The trailing "/" is important
+Path ~/.mail/gmail/
+Inbox ~/.mail/gmail/Inbox
+
+Channel gmail-inbox
+Master :gmail-remote:INBOX
+Slave :gmail-local:inbox
+Create Slave
+
+Channel gmail-bin
+Master :gmail-remote:"[Gmail]/Kosz"
+Slave :gmail-local:bin
+Create Slave
+
+Channel gmail-spam
+Master :gmail-remote:"[Gmail]/Spam"
+Slave :gmail-local:spam
+Create Slave
+
+Channel gmail-sent
+Master :gmail-remote:"[Gmail]/Wys&AUI-ane"
+Slave :gmail-local:sent
+
+Channel gmail-drafts
+Master :gmail-remote:"[Gmail]/Wersje robocze"
+Slave :gmail-local:drafts
+
+Channel gmail-sister
+Master :gmail-remote:Siostra
+Slave :gmail-local:sister
+Create Slave
+
+Channel gmail-all
+Master :gmail-remote:"[Gmail]/Wszystkie"
+Slave :gmail-local:all
+Create Slave
+
+Channel gmail-web
+Master :gmail-remote:"Web"
+Slave :gmail-local:web
+Create Slave
+
+Channel xmonad
+Master :gmail-remote:Xmonad
+Slave :gmail-local:xmonad
+Create Slave
+
+Group gmail
+Channel gmail-inbox
+Channel gmail-sent
+Channel gmail-drafts
+Channel gmail-sister
+Channel gmail-bin
+Channel gmail-spam
+Channel gmail-all
+Channel xmonad
