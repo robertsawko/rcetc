@@ -129,7 +129,13 @@ alias setdlproxy='\
         export ftp_proxy=http://wwwcache.dl.ac.uk:8080;\
         export https_proxy=http://wwwcache.dl.ac.uk:8080;'
 
-alias firedrake='source ~/projects/firedrake/bin/activate'
+zstyle ':completion:*:*:git:files' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+source /usr/share/lmod/7.7.29/init/zsh
+. /usr/share/zsh/functions/Completion/bashcompinit 2> /dev/null
+. /usr/share/zsh/functions/Completion/bashcompinit
+source /usr/share/lmod/7.7.29/init/lmod_bash_completions
+module use ~/modules
 
 alias printcolors='(\
         x=`tput op` y=`printf %76s`;\
@@ -140,4 +146,4 @@ alias printcolors='(\
                 tput setab $i`${y// /=}$x;\
         done)'
 
-alias smv='rsync --remove-source-files'
+alias tv='.local/bin/terminal_velocity'
